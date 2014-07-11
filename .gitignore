@@ -57,6 +57,9 @@ coverage
 # Compiled binary addons (http://nodejs.org/api/addons.html)
 build/Release
 
+# de mongo data dir
+data/db
+
 # Dependency directory
 # Commenting this out is preferred by some people, see
 # https://npmjs.org/doc/faq.html#Should-I-check-my-node_modules-folder-into-git

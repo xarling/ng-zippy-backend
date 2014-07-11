@@ -1,0 +1,36 @@
+[{
+	straat: "Groningenstraat",
+	huisnummer: "4",
+	postcode: "1082RA",
+	woonplaats: "Amsterdam"
+},{
+	straat: "Groningenstraat",
+	huisnummer: "10",
+	postcode: "1082RA",
+	woonplaats: "Amsterdam"
+},{
+	straat: "Groningenstraat",
+	huisnummer: "20",
+	postcode: "1082RA",
+	woonplaats: "Amsterdam"
+},{
+	straat: "Alexanderstraat",
+	huisnummer: "2",
+	postcode: "2011VE",
+	woonplaats: "Haarlem"
+},{
+	straat: "Alexanderstraat",
+	huisnummer: "4",
+	postcode: "2011VE",
+	woonplaats: "Haarlem"
+},{
+	straat: "Alexanderstraat",
+	huisnummer: "6",
+	postcode: "2011VE",
+	woonplaats: "Haarlem"
+},{
+	straat: "Alexanderstraat",
+	huisnummer: "8",
+	postcode: "2011VE",
+	woonplaats: "Haarlem"
+}]

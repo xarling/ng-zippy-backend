@@ -1,61 +1,80 @@
-var express = require('express')
-  , mongoskin = require('mongoskin')
-  , bodyParser = require('body-parser')
+var express = require('express');
+var mongoskin = require('mongoskin');
+var bodyParser = require('body-parser');
+var logger = require('morgan');
+var session = require('express-session');
+var cookieParser = require('cookie-parser');
+var csrf = require('csurf');
 
-var app = express()
-app.use(bodyParser())
 
-var db = mongoskin.db('mongodb://@localhost:27017/zippy', {safe:true});
+var app = express();
 
-var postcodes = db.collection('postcodes');
+var env = process.env.NODE_ENV || 'development';
 
-app.get('/', function(req, res, next) {
-  res.send('dit endpoint doet niets. ga naar postcode/')
-})
+app.use(bodyParser());
 
-app.get('/postcode/', function(req, res, next) {
-  postcodes.find({} ,{}).toArray(function(e, results) {
-    if (e) {
-      return next(e);
-    }
-    res.send(results)
-  });
-})
+// define logger
+app.use(logger());
 
-app.post('/postcode/', function(req, res, next) {
-  postcodes.insert(req.body, {}, function(e, results){
-    if (e) {
-      return next(e);
-    }
-    res.send(results)
-  })
-})
+// we are behind a proxy (nginx)
+app.set('trust proxy', true);
 
-app.get('/postcode/:id', function(req, res, next) {
-  postcodes.findById(req.params.id, function(e, result){
-    if (e) { 
-      return next(e);
-    }
-    res.send(result)
-  })
-})
+/*
+configuration
+*/
+if ('development' == env) {
+  app.set('dbUri', 'mongodb://@localhost:27017/zippy');
+}
 
-app.put('/postcode/:id', function(req, res, next) {
-  postcodes.updateById(req.params.id, {$set:req.body}, {safe:true, multi:false}, function(e, result){
-    if (e) {
-      return next(e);
-    }
-    res.send((result===1)?{msg:'success'}:{msg:'error'})
-  })
-})
+if ('staging' == env) {
+  app.set('dbUri', process.env.MONGOHQ_URL);
+}
 
-app.delete('/postcode/:id', function(req, res, next) {
-  postcodes.removeById(req.params.id, function(e, result){
-    if (e) {
-      return next(e);
-    }
-    res.send((result===1)?{msg:'success'}:{msg:'error'})
-  })
-})
+//add logging for each request
+app.use(function(req, res, next) {
+  console.log('%s %s — %s', (new Date).toString(), req.method, req.url);
+  return next();
+});
+
+// enable cookie parser
+app.use(cookieParser());
+
+// error handling
+app.use(function(err, req, res, next) {
+   //do logging and user-friendly error message display
+   console.error(err);
+   res.send(500, {status:500, message: 'internal error', type:'internal'});
+});
+
+//enable csrf protection
+//app.use(csrf());
+
+// serve static files, not need for now
+//app.use(express.static(path.join(__dirname, 'public')));
+
+
+var db = mongoskin.db(app.get('dbUri'), {safe:true});
+
+app.set('db', db);
+
+var postcodes = require('./routes/postcodes')(app);
+
+
+
+
+app.get('/postcodes', postcodes.findAll);
+
+app.get('/postcode', postcodes.find);
+
+app.post('/postcode', postcodes.add);
+
+app.get('/postcode/:id', postcodes.findById);
+
+app.put('/postcode/:id', postcodes.updateById);
+
+app.delete('/postcode/:id', postcodes.remove);
+
+
+console.log('Express server listening on port 3000');
 
 app.listen(3000);
