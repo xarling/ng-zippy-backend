@@ -1,0 +1,12 @@
+{
+  "db": {
+	  "host": "127.0.0.1",
+    "port": 27017,
+    "database": "zippy"
+  },
+  "workshop": {
+    "api_key": "C7C211A6-D8A7-4E41-99E6-DA0EB95CD864"
+  }, 
+  "trust_proxy": true,
+  "port": 3000
+}

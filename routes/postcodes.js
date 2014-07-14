@@ -20,9 +20,10 @@ module.exports = function(app) {
 				res.send(204, {msg: 'either huisnummer or postcode must be used'});
 				return next();
 			} else {
-
+				console.log('finding records');
 				postcodes.findOne({postcode:req.query.postcode, huisnummer: req.query.huisnummer}, function(err, result) {
 				  console.log(result);
+				  console.log(err);
 				  if ( result === null ) {
 				  	res.send(404);
 				  } else {
